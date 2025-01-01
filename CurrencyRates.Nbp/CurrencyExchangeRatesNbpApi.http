@@ -1,0 +1,28 @@
+@HostAddress = http://localhost:5000
+@ModulePrefix = nbp
+@CurrencyCode = USD
+
+GET {{HostAddress}}/api/{{ModulePrefix}}/get-currency-rate/{{CurrencyCode}}/actual
+Accept: application/json
+
+###
+
+@ForDate = 2024-12-30
+
+GET {{HostAddress}}/api/{{ModulePrefix}}/get-currency-rate/{{CurrencyCode}}/{{ForDate}}
+Accept: application/json
+
+###
+
+@Limit = 60
+
+GET {{HostAddress}}/api/{{ModulePrefix}}/get-currency-rate/{{CurrencyCode}}/last/{{Limit}}
+Accept: application/json
+
+###
+
+@StartDate = 2024-12-01
+@EndDate = 2024-12-31
+
+GET {{HostAddress}}/api/{{ModulePrefix}}/get-currency-rate/{{CurrencyCode}}/{{StartDate}}/{{EndDate}}
+Accept: application/json
