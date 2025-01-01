@@ -132,7 +132,7 @@ dotnet publish
 Wymagane jest zainstalowanie SDK .NET 9.
 
 
-#### Uruchmianie
+## Uruchmianie
 
 Projekt posiada trzy możliwości uruchomienia
 
