@@ -2,14 +2,14 @@
 
 public class Result<TResult>
 {
-    public Result(TResult result)
+    private Result(TResult result)
     {
         ResultValue = result;
         ErrorMessage = null;
         IsSuccess = true;
     }
-    
-    public Result(string errorMessage)
+
+    private Result(string errorMessage)
     {
         ErrorMessage = errorMessage;
         IsSuccess = false;

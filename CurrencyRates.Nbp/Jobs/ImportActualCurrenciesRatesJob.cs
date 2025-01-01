@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using CurrencyExchangeRates.Data.Context;
 using CurrencyExchangeRates.Data.Entities;
+using CurrencyRates.Common.Cache;
 using CurrencyRates.Common.Hangfire;
 using CurrencyRates.Nbp.Extensions;
 using CurrencyRates.Nbp.Helpers;
@@ -8,6 +9,7 @@ using CurrencyRates.Nbp.HttpClient;
 using CurrencyRates.Nbp.Models.AdditionalDatas;
 using CurrencyRates.Nbp.Models.Tables;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace CurrencyRates.Nbp.Jobs;
@@ -18,15 +20,18 @@ public class ImportActualCurrenciesRatesJob : IScheduleJob
     private readonly INbpTablesApiClient _nbpTablesApiClient;
     private readonly DatabaseContext _databaseContext;
     private readonly ILogger<ImportActualCurrenciesRatesJob> _logger;
+    private readonly IMemoryCache _memoryCache;
 
     public ImportActualCurrenciesRatesJob(
         INbpTablesApiClient nbpTablesApiClient,
         DatabaseContext databaseContext,
-        ILogger<ImportActualCurrenciesRatesJob> logger)
+        ILogger<ImportActualCurrenciesRatesJob> logger,
+        IMemoryCache memoryCache)
     {
         _nbpTablesApiClient = nbpTablesApiClient;
         _databaseContext = databaseContext;
         _logger = logger;
+        _memoryCache = memoryCache;
     }
 
     private DateOnly _today => DateOnly.FromDateTime(DateTime.Now);
@@ -50,6 +55,11 @@ public class ImportActualCurrenciesRatesJob : IScheduleJob
             }
 
             await _databaseContext.SaveChangesAsync();
+
+            foreach (var currency in _existCurrencies)
+            {
+                _memoryCache.Remove(CacheHelper.GetKeyForDatabaseRate(currency.Code, _today));
+            }
             
             _logger.LogInformation("Imported currencies rates");
         }

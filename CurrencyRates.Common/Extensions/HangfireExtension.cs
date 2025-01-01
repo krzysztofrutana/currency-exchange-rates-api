@@ -101,38 +101,35 @@ public static class HangfireExtension
 
 public class ServiceProviderActivator : AspNetCoreJobActivator
 {
-    protected IServiceScopeFactory ScopeFactory { get; }
+    private IServiceScopeFactory ScopeFactory { get; }
 
-    #region ServiceProviderActivator()
     public ServiceProviderActivator(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
     {
         ScopeFactory = serviceScopeFactory;
     }
-    #endregion
 
-    #region ActivateJob()
+    // Musimy nadpisać, bo inaczej wywoła się metoda używająca zwykłego aktywatora bez DI
     public override object ActivateJob(Type jobType)
     {
         throw new NotImplementedException();
     }
-    #endregion
 
-    #region BeginScope()
+    // Musimy nadpisać, bo inaczej wywoła się metoda używająca zwykłego aktywatora bez DI
     public override JobActivatorScope BeginScope(JobActivatorContext context)
     {
         throw new NotImplementedException();
     }
 
+    // Nadpisujemy tworzenie Scope wraz z własnym Service Providerem, pozwoli to używać DI w jobach
     public override JobActivatorScope BeginScope(PerformContext context)
     {
         return new ServiceProviderJobActivatorScope(ScopeFactory.CreateAsyncScope(), context);
     }
-    #endregion
 }
 
 public class ServiceProviderJobActivatorScope : JobActivatorScope
 {
-    protected AsyncServiceScope Scope { get; }
+    private AsyncServiceScope Scope { get; }
 
     #region ServiceProviderJobActivatorScope()
     public ServiceProviderJobActivatorScope(AsyncServiceScope scope, PerformContext context)

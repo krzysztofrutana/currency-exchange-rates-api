@@ -1,21 +1,22 @@
 ﻿using CurrencyExchangeRates.Data.Context;
 using CurrencyExchangeRates.Data.Entities;
 using CurrencyRates.Common.Models;
-using CurrencyRates.Nbp.Extensions;
 using CurrencyRates.Nbp.Helpers;
-using CurrencyRates.Nbp.Models.AdditionalDatas;
 using CurrencyRates.Nbp.Models.Responses;
 using CurrencyRates.Nbp.Queries;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CurrencyRates.Nbp.Handlers.Queries;
 
-internal class GetCurrencyRatesFromDatePeriodQueryHandler : GetCurrencyRateBaseHandler, IRequestHandler<GetCurrencyRatesFromDatePeriodQuery, Result<IEnumerable<CurrencyRateResponse>>>
+internal class GetCurrencyRatesFromDatePeriodQueryHandler : 
+    GetCurrencyRateBaseHandler, 
+    IRequestHandler<GetCurrencyRatesFromDatePeriodQuery, Result<IEnumerable<CurrencyRateResponse>>>
 {
     public GetCurrencyRatesFromDatePeriodQueryHandler(
         DatabaseContext databaseContext,
-        NbpHelper nbpHelper) : base(nbpHelper, databaseContext)
+        NbpHelper nbpHelper,
+        IMemoryCache memoryCache) : base(nbpHelper, databaseContext, memoryCache)
     {
     }
     
@@ -33,7 +34,7 @@ internal class GetCurrencyRatesFromDatePeriodQueryHandler : GetCurrencyRateBaseH
                 string.Join(", ", errors));
         }
 
-        var currency = await GetCurrencyAsync(request.Code);
+        var currency = await TryGetCurrencyFromCache(request.Code);
         if(currency is null)
             return Result<IEnumerable<CurrencyRateResponse>>.Failure("Currency with this code does not exist");
 

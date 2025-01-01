@@ -157,8 +157,10 @@ W katalogu `.tools` głównym katalogu solucji jest plik `InstallAsService.bat`.
 #### Docker
 W folderze głównym projektu należy uruchomić polecenie
 ```
-docker-compose
+docker-compose up
 ```
+Domyślnie API będzie dostępne na localhost:5000, baza danych na localhost:1450.
+
 ## Uruchamianie testów
 
 W głównym katalogu solucji należy uruchomić polecenie:

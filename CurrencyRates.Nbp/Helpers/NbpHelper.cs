@@ -24,7 +24,7 @@ public class NbpHelper
     /// Szuka waluty o podanym kodzie w tabelach typu A i B
     /// </summary>
     /// <param name="currencyCode">Kod waluty</param>
-    /// <returns></returns>
+    /// <returns>Tabelę dla podanej waluty, null jeśli nie znaleziono</returns>
     public async Task<NbpTable> SearchCurrencyInNpbAsync(string currencyCode)
     {
         var tableAResult = await _nbpTablesApiClient.GetTableAsync("a");
@@ -37,12 +37,26 @@ public class NbpHelper
 
         return null;
     }
+    
+    /// <summary>
+    /// Szukamy waluty w tabeli C
+    /// </summary>
+    /// <param name="currencyCode"></param>
+    /// <returns></returns>
+    public async Task<NbpTable> SearchCurrencyInNbpTableCAsync(string currencyCode)
+    {
+        var tableCResult = await _nbpTablesApiClient.GetTableAsync("c");
+        if(tableCResult.Any(s => s.Rates.Any(z => z.Code == currencyCode)))
+            return tableCResult.First(s => s.Rates.Any(z => z.Code == currencyCode));
+        
+        return null;
+    }
 
     /// <summary>
     /// Sprawdza kurs dla waluty i podanego dnia
     /// </summary>
-    /// <param name="currency"></param>
-    /// <param name="date"></param>
+    /// <param name="currency">Waluta</param>
+    /// <param name="date">Data</param>
     /// <returns>Kurs NBP lub null jeśli brak kursu na podany dzień</returns>
     public async Task<NbpCurrencyRate> GetRateForCurrencyAsync(Currency currency, DateOnly date)
     {
@@ -66,9 +80,9 @@ public class NbpHelper
                     rate.SaleRate ??= rateResult.SaleRate;
                 }
             }
-            catch (ApiException ex)
+            catch
             {
-                continue;
+                // ignored
             }
         }
 
