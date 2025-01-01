@@ -28,6 +28,7 @@ try
     builder.Services.AddSerilogLogger(builder.Configuration);
 
     builder.Services.AddOpenApi();
+    builder.Services.AddMemoryCache();
 
     builder.Services.RegisterHangfire(builder.Configuration);
     builder.Services.RegisterDataModule(builder.Configuration);
@@ -44,9 +45,14 @@ try
     {
         configure.ServiceName = "CurrencyExchangeRates";
     });
-    
+
+    builder.Services.AddProblemDetails();
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        
     var app = builder.Build();
 
+    app.UseExceptionHandler();
+        
     app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())
