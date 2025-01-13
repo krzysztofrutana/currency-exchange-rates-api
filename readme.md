@@ -138,7 +138,7 @@ Projekt posiada trzy możliwości uruchomienia
 
 #### Kestrel
 
-W przypadku pracy nad projektem w głównym katalogu solucji należy uruchomić polecenie 
+W przypadku pracy nad projektem w głównym katalogu solucji w folderze projektu `CurrencyExchangeRates.Api` należy uruchomić polecenie 
 ```
 dotnet run
 ```

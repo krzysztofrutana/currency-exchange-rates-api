@@ -6,7 +6,7 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["CurrencyExchangeRatesApi/CurrencyExchangeRatesApi.csproj", "CurrencyExchangeRatesApi/"]
+COPY ["CurrencyExchangeRates.Api/CurrencyExchangeRatesApi.csproj", "CurrencyExchangeRatesApi/"]
 RUN dotnet restore "CurrencyExchangeRatesApi/CurrencyExchangeRatesApi.csproj"
 COPY . .
 WORKDIR "/src/CurrencyExchangeRatesApi"
